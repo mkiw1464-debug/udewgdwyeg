@@ -45,7 +45,7 @@ namespace UnityEngine {
     }
     public class Camera : Behaviour {
         public static Camera main;
-        public Transform transform;
+        public new Transform transform;
         public Vector3 WorldToScreenPoint(Vector3 p) { return Vector3.zero; }
     }
     public class Texture2D : Object {
@@ -70,7 +70,7 @@ namespace UnityEngine {
         public GUIStyle(GUIStyle s) {}
     }
     public class GUIStyleState { public Color textColor; public Texture2D background; }
-    public static class GUIContent { public static GUIContent none = null; }
+    public class GUIContent { public static readonly GUIContent none = null; public GUIContent(){} public GUIContent(string t){} }
     public class Event {
         public static Event current = new Event();
         public EventType type;
@@ -80,12 +80,12 @@ namespace UnityEngine {
     public enum EventType { Repaint, Layout, MouseDown, MouseUp, MouseDrag, ScrollWheel, KeyDown, KeyUp }
     public static class GUI {
         public static Color color;
-        public static Rect Window(int id, Rect r, UnityEngine.GUI.WindowFunction func, GUIContent c, GUIStyle st) { return r; }
+        public static Rect Window(int id, Rect r, UnityEngine.GUI.WindowFunction func, object c, GUIStyle st) { return r; }
         public delegate void WindowFunction(int id);
         public static void DrawTexture(Rect r, Texture2D t) {}
         public static void Label(Rect r, string s, GUIStyle st) {}
         public static bool Button(Rect r, string s, GUIStyle st) { return false; }
-        public static void Box(Rect r, GUIContent c, GUIStyle st) {}
+        public static void Box(Rect r, object c, GUIStyle st) {}
         public static Vector2 BeginScrollView(Rect r, Vector2 pos, Rect content, bool h, bool v) { return pos; }
         public static void EndScrollView() {}
     }
