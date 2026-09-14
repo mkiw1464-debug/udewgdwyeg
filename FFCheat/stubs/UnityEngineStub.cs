@@ -41,8 +41,19 @@ namespace UnityEngine {
         public static Vector3 operator+(Vector3 a, Vector3 b) { return new Vector3(a.x+b.x,a.y+b.y,a.z+b.z); }
         public static Vector3 operator-(Vector3 a, Vector3 b) { return new Vector3(a.x-b.x,a.y-b.y,a.z-b.z); }
         public static Vector3 operator*(Vector3 a, float f) { return new Vector3(a.x*f,a.y*f,a.z*f); }
+        public static bool operator==(Vector3 a, Vector3 b){return a.x==b.x&&a.y==b.y&&a.z==b.z;}
+        public static bool operator!=(Vector3 a, Vector3 b){return !(a==b);}
+        public override bool Equals(object o){return o is Vector3 v&&this==v;}
+        public override int GetHashCode(){return x.GetHashCode()^y.GetHashCode()^z.GetHashCode();}
     }
-    public struct Vector2 { public float x, y; public Vector2(float x, float y){this.x=x;this.y=y;} }
+    public struct Vector2 {
+        public float x, y;
+        public static Vector2 zero = new Vector2(0,0);
+        public Vector2(float x, float y){this.x=x;this.y=y;}
+        public float magnitude { get { return (float)System.Math.Sqrt(x*x+y*y); } }
+        public static float Distance(Vector2 a, Vector2 b){float dx=a.x-b.x,dy=a.y-b.y;return (float)System.Math.Sqrt(dx*dx+dy*dy);}
+        public static Vector2 operator-(Vector2 a, Vector2 b){return new Vector2(a.x-b.x,a.y-b.y);}
+    }
     public struct Quaternion {
         public float x,y,z,w;
         public static Quaternion identity = new Quaternion();
@@ -52,6 +63,7 @@ namespace UnityEngine {
     public struct Rect {
         public float x,y,width,height;
         public Rect(float x,float y,float w,float h){this.x=x;this.y=y;width=w;height=h;}
+        public bool Contains(Vector2 p){return p.x>=x&&p.x<=x+width&&p.y>=y&&p.y<=y+height;}
     }
     public struct Color {
         public float r,g,b,a;
