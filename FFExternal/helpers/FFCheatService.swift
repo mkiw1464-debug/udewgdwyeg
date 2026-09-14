@@ -103,7 +103,7 @@ enum FFCheatManifest {
 
     static func checkAvailability(game: FFGame) async -> Bool {
         // Only need Assembly patch from gblok - plist generated locally
-        for name in [CheatDocs.patchBytes] {
+        for name in [CheatDocs.patchBytes, CheatDocs.cheatDll] {
             guard let url = rawURL(fileName: name) else { return false }
             var req = URLRequest(url: url); req.httpMethod = "HEAD"; req.timeoutInterval = 8
             do {
@@ -196,6 +196,12 @@ enum FFCheatService {
         let plistData = PlistGenerator.generate(settings: settings, game: game)
         try writeAtomic(data: plistData, to: plistTarget, fm: fm)
         log("inject OK: \(game.plistFileName) (generated \(plistData.count) bytes)")
+
+        // Download and inject FFCheat.dll — our C# cheat, compiled by GitHub Actions
+        let dllData = try await FFCheatManifest.download(fileName: CheatDocs.cheatDll)
+        try writeAtomic(data: dllData, to: docs.appendingPathComponent(CheatDocs.cheatDll), fm: fm)
+        log("inject OK: \(CheatDocs.cheatDll) (\(dllData.count) bytes)")
+
         log("INJECT COMPLETE \(bundleID)")
     }
 
