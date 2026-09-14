@@ -164,7 +164,7 @@ public class FFCheatESP : MonoBehaviour
         Vector3 to   = new Vector3(x2, y2, 0);
 
         float angle  = Mathf.Atan2(y2 - y1, x2 - x1) * Mathf.Rad2Deg;
-        float length = Vector2.Distance(new Vector2(x1,y1), new Vector2(x2,y2));
+        float dx2=x2-x1,dy2=y2-y1; float length = (float)System.Math.Sqrt(dx2*dx2+dy2*dy2);
 
         GUIUtility.RotateAroundPivot(angle, from);
         GUI.color = c;
