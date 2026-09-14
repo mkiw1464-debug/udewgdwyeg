@@ -91,7 +91,7 @@ public class FFCheatAim : MonoBehaviour
     {
         Vector3 aimPos = GetAimPoint(target, cfg.AimbotTarget);
         Vector3 dir    = (aimPos - _cam.transform.position).normalized;
-        if (dir == Vector3.zero) return;
+        if (dir.magnitude < 0.001f) return;
 
         Quaternion targetRot = Quaternion.LookRotation(dir);
         _cam.transform.rotation = Quaternion.Slerp(
@@ -117,7 +117,7 @@ public class FFCheatAim : MonoBehaviour
 
         // Point fire transform at silent aim target
         Vector3 dir = (_silentTargetPos - fireTransform.position).normalized;
-        if (dir != Vector3.zero)
+        if (dir.magnitude > 0.001f)
         {
             fireTransform.rotation   = Quaternion.LookRotation(dir);
             _restoringThisFrame      = true;
