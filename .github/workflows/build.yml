@@ -116,12 +116,14 @@ jobs:
           echo "mcs: $MCS"
 
           # Compile UnityEngine stub first
-          STUB_SRC="${{ steps.paths.outputs.PROJ_DIR }}/../FFCheat/stubs/UnityEngineStub.cs"
+          STUB_SRC="$GITHUB_WORKSPACE/FFCheat/stubs/UnityEngineStub.cs"
+          echo "Stub path: $STUB_SRC"
+          ls "$STUB_SRC" 2>/dev/null || { echo "ERROR: stub not found"; find "$GITHUB_WORKSPACE" -name "*.cs" | head -20; exit 1; }
           $MCS "$STUB_SRC" -target:library -out:"$RUNNER_TEMP/UnityEngine.dll"
           echo "UnityEngine stub: $(ls -lh $RUNNER_TEMP/UnityEngine.dll)"
 
           # Compile our cheat
-          CHEAT_SRC="${{ steps.paths.outputs.PROJ_DIR }}/../FFCheat"
+          CHEAT_SRC="$GITHUB_WORKSPACE/FFCheat"
           $MCS \
             "$CHEAT_SRC/FFCheatConfig.cs" \
             "$CHEAT_SRC/FFCheatESP.cs" \
