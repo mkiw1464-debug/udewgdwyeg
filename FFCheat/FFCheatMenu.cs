@@ -25,7 +25,7 @@ public class FFCheatMenu : MonoBehaviour
     private bool  _threeFingerDown     = false;
 
     // ── Scroll ────────────────────────────────────────────────────────────────
-    private Vector2 _scrollPos = Vector2.zero;
+    private Vector2 _scrollPos = new Vector2(0,0);
 
     // ── Textures ──────────────────────────────────────────────────────────────
     private Texture2D _bgTex;       // dark grey translucent bg
@@ -130,7 +130,7 @@ public class FFCheatMenu : MonoBehaviour
         // Header bar = top 40px of window
         Rect headerBar = new Rect(_windowRect.x, _windowRect.y, _windowRect.width, 44f);
 
-        if (t.phase == TouchPhase.Began && headerBar.Contains(pos))
+        if (t.phase == TouchPhase.Began && (pos.x>=headerBar.x&&pos.x<=headerBar.x+headerBar.width&&pos.y>=headerBar.y&&pos.y<=headerBar.y+headerBar.height))
         {
             _isDragging  = true;
             _dragOffset  = new Vector2(_windowRect.x - pos.x, _windowRect.y - pos.y);
