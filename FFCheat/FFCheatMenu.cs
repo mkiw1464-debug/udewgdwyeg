@@ -289,7 +289,7 @@ public class FFCheatMenu : MonoBehaviour
 
         // Touch/click toggle
         if (Event.current.type == EventType.MouseDown &&
-            pillRect.Contains(Event.current.mousePosition))
+            (Event.current.mousePosition.x>=pillRect.x&&Event.current.mousePosition.x<=pillRect.x+pillRect.width&&Event.current.mousePosition.y>=pillRect.y&&Event.current.mousePosition.y<=pillRect.y+pillRect.height))
         {
             value = !value;
             Event.current.Use();
@@ -332,7 +332,7 @@ public class FFCheatMenu : MonoBehaviour
         Rect dragArea = new Rect(trackX, trackY - 10f, trackW, 24f);
         if ((Event.current.type == EventType.MouseDown ||
              Event.current.type == EventType.MouseDrag)
-             && dragArea.Contains(Event.current.mousePosition))
+             && (Event.current.mousePosition.x>=dragArea.x&&Event.current.mousePosition.x<=dragArea.x+dragArea.width&&Event.current.mousePosition.y>=dragArea.y&&Event.current.mousePosition.y<=dragArea.y+dragArea.height))
         {
             float newT = (Event.current.mousePosition.x - trackX) / trackW;
             value = Mathf.Clamp(min + newT * (max - min), min, max);
@@ -363,7 +363,7 @@ public class FFCheatMenu : MonoBehaviour
             GUI.color = Color.white;
 
             if (Event.current.type == EventType.MouseDown &&
-                btnRect.Contains(Event.current.mousePosition))
+                (Event.current.mousePosition.x>=btnRect.x&&Event.current.mousePosition.x<=btnRect.x+btnRect.width&&Event.current.mousePosition.y>=btnRect.y&&Event.current.mousePosition.y<=btnRect.y+btnRect.height))
             {
                 _aimbotTarget = i;
                 Event.current.Use();
