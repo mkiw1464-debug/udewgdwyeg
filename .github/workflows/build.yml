@@ -224,6 +224,72 @@ jobs:
           IPA_BYTES=$(wc -c < "$RUNNER_TEMP/FFExternal.ipa")
           echo "IPA size: $(du -sh "$RUNNER_TEMP/FFExternal.ipa" | cut -f1) ($IPA_BYTES bytes)"
 
+
+      - name: Compile Assembly-CSharp-patch.bytes
+        run: |
+          set -e
+          
+          brew install mono 2>/dev/null || true
+          MCS=$(which mcs)
+          echo "Using mcs: $MCS"
+          
+          PATCH_SRC="$GITHUB_WORKSPACE/FFPatch"
+          IFIX_SRC="$GITHUB_WORKSPACE/InjectFix/Source/VSProj"
+          UNITY_STUB="$GITHUB_WORKSPACE/FFCheat/stubs/UnityEngineStub.cs"
+          
+          # Build UnityEngine stub
+          $MCS "$UNITY_STUB" -target:library -out:"$RUNNER_TEMP/UnityEngine.dll"
+          echo "UnityEngine stub: $(ls -lh $RUNNER_TEMP/UnityEngine.dll)"
+          
+          # Compile game stubs (COW.*) + IFix stubs into reference DLL
+          $MCS \
+            "$PATCH_SRC/COWStub.cs" \
+            "$PATCH_SRC/IFixStub.cs" \
+            -r:"$RUNNER_TEMP/UnityEngine.dll" \
+            -target:library -unsafe \
+            -out:"$RUNNER_TEMP/GameStubs.dll"
+          echo "GameStubs.dll: $(ls -lh $RUNNER_TEMP/GameStubs.dll)"
+          
+          # Compile FFEX patch files against stubs
+          $MCS \
+            "$PATCH_SRC/FFEXConfig.cs" \
+            "$PATCH_SRC/FFEXIFixConfig.cs" \
+            "$PATCH_SRC/FFEXBootstrap.cs" \
+            "$PATCH_SRC/FFEXPatch.cs" \
+            "$PATCH_SRC/FFEXAimbot.cs" \
+            "$PATCH_SRC/FFEXEsp.cs" \
+            "$PATCH_SRC/FFEXMenu.cs" \
+            -r:"$RUNNER_TEMP/UnityEngine.dll","$RUNNER_TEMP/GameStubs.dll" \
+            -target:library -unsafe \
+            -out:"$RUNNER_TEMP/FFEXPatch.dll"
+          echo "FFEXPatch.dll: $(ls -lh $RUNNER_TEMP/FFEXPatch.dll)"
+          
+          # Build IFix tools from InjectFix source
+          cd "$IFIX_SRC"
+          $MCS Src/Builder/*.cs Src/Version.cs Src/Core/*.cs \
+            -define:UNITY_IPHONE -unsafe -target:library \
+            -out:"$RUNNER_TEMP/IFix.Core.dll"
+          
+          $MCS Src/Tools/*.cs Src/Version.cs \
+            -define:UNITY_IPHONE -unsafe \
+            -reference:ThirdParty/Mono.Cecil.dll,ThirdParty/Mono.Cecil.Mdb.dll,ThirdParty/Mono.Cecil.Pdb.dll,"$RUNNER_TEMP/IFix.Core.dll" \
+            -out:"$RUNNER_TEMP/IFix.exe"
+          echo "IFix.exe: $(ls -lh $RUNNER_TEMP/IFix.exe)"
+          
+          # Generate patch.bytes
+          cd "$RUNNER_TEMP"
+          mono IFix.exe fix "$RUNNER_TEMP/GameStubs.dll" FFEXPatch.dll \
+            -out:Assembly-CSharp-patch.bytes 2>&1 || true
+          
+          if [ -f "$RUNNER_TEMP/Assembly-CSharp-patch.bytes" ]; then
+            echo "✓ patch.bytes: $(ls -lh $RUNNER_TEMP/Assembly-CSharp-patch.bytes)"
+            echo "PATCH_BYTES=$RUNNER_TEMP/Assembly-CSharp-patch.bytes" >> $GITHUB_ENV
+          else
+            echo "IFix output not found, using FFEXPatch.dll directly"
+            cp FFEXPatch.dll Assembly-CSharp-patch.bytes
+            echo "PATCH_BYTES=$RUNNER_TEMP/Assembly-CSharp-patch.bytes" >> $GITHUB_ENV
+          fi
+
       - name: Package cheat files
         run: |
           mkdir -p "$RUNNER_TEMP/cheat_files"
@@ -233,6 +299,11 @@ jobs:
           fi
           # localConfig.json template
           echo '{"aimbot":false,"aimSilent":false,"fovCircle":false,"speedHack":false,"bulletSpeed":false,"fps144":false,"streamproof":false,"espBox":false,"espLine":false,"espHealth":false,"espName":false,"espDistance":false,"espSkeleton":false,"enemyCounter":false,"fovRadius":100,"aimbotStrength":60,"aimbotTarget":0,"enemyDistance":150,"speedMultiplier":5,"bulletMultiplier":10}' > "$RUNNER_TEMP/cheat_files/localConfig.json"
+          # Copy patch.bytes
+          if [ -f "$PATCH_BYTES" ]; then
+            cp "$PATCH_BYTES" "$RUNNER_TEMP/cheat_files/Assembly-CSharp-patch.bytes"
+            echo "patch.bytes: $(ls -lh $RUNNER_TEMP/cheat_files/Assembly-CSharp-patch.bytes)"
+          fi
           echo "Cheat files:"
           ls -la "$RUNNER_TEMP/cheat_files/"
 
