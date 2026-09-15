@@ -47,8 +47,8 @@ namespace COW.GamePlay
 
     public partial class Player
     {
-        public GameObject gameObject;
-        public Transform  transform;
+        public GameObject gameObject { get { return null; } }
+        public Transform  transform  { get { return null; } }
 
         public bool IsLocalPlayerOutOfControlNeedUpdataAimRotaion() { return false; }
         public void UpdateAimRotation() { }
