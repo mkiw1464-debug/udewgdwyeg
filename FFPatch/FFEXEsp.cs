@@ -41,9 +41,6 @@ namespace FFEX
             _players.Clear();
             _visCount = 0;
 
-            var facade = GameFacade.Instance;
-            if (facade == null) return;
-
             // Find all players via COW game objects
             var objs = UnityEngine.Object.FindObjectsOfType<Player>();
             foreach (var p in objs)
