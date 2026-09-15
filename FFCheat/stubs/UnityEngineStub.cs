@@ -3,6 +3,7 @@ namespace UnityEngine {
         public string name;
         public static void Destroy(Object o) {}
         public static void DontDestroyOnLoad(Object o) {}
+        public static T[] FindObjectsOfType<T>() where T : Object { return new T[0]; }
     }
     public class Component : Object {
         public GameObject gameObject;
@@ -145,10 +146,16 @@ namespace UnityEngine {
     public class Mathf {
         public static float Sqrt(float f) { return (float)System.Math.Sqrt(f); }
         public static float Clamp(float v, float min, float max) { return v<min?min:v>max?max:v; }
+        public static float Clamp01(float v) { return v<0?0:v>1?1:v; }
         public static float Atan2(float y, float x) { return (float)System.Math.Atan2(y,x); }
+        public static float Sin(float f) { return (float)System.Math.Sin(f); }
+        public static float Cos(float f) { return (float)System.Math.Cos(f); }
         public static float Min(float a, float b) { return a<b?a:b; }
+        public static float Max(float a, float b) { return a>b?a:b; }
         public static float Abs(float f) { return f<0?-f:f; }
+        public static int   RoundToInt(float f) { return (int)System.Math.Round(f); }
         public const float Rad2Deg = 57.29578f;
+        public const float Deg2Rad = 0.01745329f;
         public const float PI = 3.14159265f;
     }
     public class Debug { public static void Log(object o) {} }
