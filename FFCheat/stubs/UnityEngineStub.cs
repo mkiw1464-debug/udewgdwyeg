@@ -160,6 +160,7 @@ namespace UnityEngine {
     }
     public class Rigidbody : Component { public Vector3 velocity; }
     public struct RaycastHit { public Vector3 point; public Transform transform; }
+    public class Collider : Component { }
     public class Physics {
         public static bool Raycast(Vector3 o, Vector3 d, out RaycastHit h, float dist) {
             h = new RaycastHit(); return false;
