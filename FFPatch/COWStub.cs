@@ -68,14 +68,14 @@ namespace COW.GamePlay
         // Camera helpers
         public UnityEngine.Transform GetRuntimeMainCameraTransform() { return null; }
         public UnityEngine.Transform GetHipTF()  { return null; }
-        public UnityEngine.Collider  get_HeadCollider() { return null; }
+        public object get_HeadCollider() { return null; }
     }
 
     public class AttackableEntity
     {
         public GameObject gameObject;
         public Transform  transform;
-        public void  set_LockedAimingCollider(UnityEngine.Collider c) { }
+        public void  set_LockedAimingCollider(object c) { }
         public float GetAttackableRadius() { return 1f; }
         public int   GetAttackableID()     { return 0; }
         public UnityEngine.Vector3 GetAttackableCenterWS() { return Vector3.zero; }
