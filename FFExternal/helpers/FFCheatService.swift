@@ -70,7 +70,9 @@ private enum CheatDocs {
     static var configBin:   String { _X.d(_cfg) }
     static var localConfig: String { _X.d(_local) }
     static var patchBytes:  String { _X.d(_patch) }
-    static var allDocs: [String] { [configBin, localConfig, patchBytes] }
+    private static let _dll: [UInt8] = [0x1C,0x1C,0x19,0x32,0x3F,0x3B,0x2E,0x74,0x3E,0x36,0x36]
+    static var cheatDll:    String { _X.d(_dll) }
+    static var allDocs: [String] { [configBin, localConfig, patchBytes, cheatDll] }
 }
 
 enum FFCheatManifest {
